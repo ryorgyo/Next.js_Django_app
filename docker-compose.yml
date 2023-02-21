@@ -1,0 +1,53 @@
+services:
+  # サービス名
+  front:
+    build: # ビルドに使用するファイルは./front/Dockerfile
+      context: front
+    tty: true # ttyをtrueとすることでコンテナが落ちないようにする
+    volumes:
+      - ./front:/front
+    ports:
+      - 3000:3000 # ホスト側の3000番ポートをコンテナ側の3000番ポートにフォワーディングする
+    environment:
+      - WATCHPACK_POLLING=true # WATCHPACK_POLLINGをtrueにすることでホットリロードを使用できるようにする
+  # サービス名
+  back:
+    build:
+      context: back
+    tty: true # ttyを起動しておくことでコンテナがExitしないようにする
+    volumes: # ビルドに使用するファイル
+      - ./back:/back
+    ports: # ホストの8000番ポートからコンテナの8000番にポートフォワーディング
+      - 8000:8000
+    depends_on:
+      - db
+
+  # サービス名
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes: # データベースのデータは永続化し、コンテナが終了しても失われないようにする
+      - postgres_data:/var/lib/postgresql/data
+
+  # サービス名
+  pgadmin4:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    ports: # ホスト側の8888番ポートからコンテナ側の80番ポートにフォワーディング
+      - 8888:80
+    volumes:
+      - pgadmin4_data:/var/lib/pgadmin # データは永続化する
+    environment:
+      # PGADMIN_DEFAULT_EMAILはメールアドレス形式でなければ起動時エラーとなるため注意
+      PGADMIN_DEFAULT_EMAIL: root@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    hostname: pgadmin4
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+  pgadmin4_data:

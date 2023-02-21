@@ -1,0 +1,15 @@
+{
+  "name": "NextJS dev container",
+  // Dockerfileでイメージ・コンテナを作成
+  "dockerComposeFile": "../docker-compose.yml",
+  // VS Codeのワークスペースフォルダ
+  "workspaceFolder": "/front",
+  // 使用するサービス
+  "service": "front",
+  "runServices": ["front"],
+  // リモート先のVS Codeにインストールする拡張機能
+  // "extensions": [
+  // 	"",
+  // ],
+  "shutdownAction": "stopCompose"
+}
